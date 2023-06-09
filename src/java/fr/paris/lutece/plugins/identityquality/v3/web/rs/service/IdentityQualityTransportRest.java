@@ -37,10 +37,10 @@ import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.AbstractTransportRest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.HttpAccessTransport;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -63,6 +63,17 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     private String _strIdentityStoreQualityEndPoint;
 
     /**
+<<<<<<< HEAD
+=======
+     * Simple Constructor
+     */
+    public IdentityQualityTransportRest( )
+    {
+        super( new HttpAccessTransport( ) );
+    }
+
+    /**
+>>>>>>> 4bf9a61 (#238 put id-quality services in separate plugin)
      * Constructor with IHttpTransportProvider parameter
      *
      * @param httpTransport
