@@ -35,9 +35,8 @@ package fr.paris.lutece.plugins.identityquality.v3.web.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-
-import javax.ws.rs.QueryParam;
 
 /**
  * Interface for providing identity quality transport.
@@ -66,7 +65,7 @@ public interface IIdentityQualityTransportProvider
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getAllSuspiciousIdentites( final int max, final Integer page, final Integer size ) throws IdentityStoreException;
+    SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size ) throws IdentityStoreException;
 
     /**
      * Get list of suspicious identities for a given rule ID
@@ -81,6 +80,27 @@ public interface IIdentityQualityTransportProvider
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getSuspiciousIdentites( final int ruleId, final int max, final Integer page, final Integer size )
+    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final int ruleId, final int max, final Integer page, final Integer size )
             throws IdentityStoreException;
+
+    /**
+     * Get list of identities that are duplicates of the provided customerId's identity, according to the provided rule ID.
+     * 
+     * @param customerId
+     *            the customer ID of the identity
+     * @param ruleId
+     *            the rule ID
+     * @param strApplicationCode
+     *            the application code
+     * @param max
+     *            maximum number of results
+     * @param page
+     *            page to return
+     * @param size
+     *            number of results per page
+     * @return DuplicateSearchResponse containing a list of {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity}
+     */
+    DuplicateSearchResponse getDuplicates( final String customerId, final int ruleId, final String strApplicationCode, final int max, final Integer page,
+            final Integer size ) throws IdentityStoreException;
+
 }

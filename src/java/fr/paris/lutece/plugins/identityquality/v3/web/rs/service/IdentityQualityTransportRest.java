@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.AbstractTransportRest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.HttpAccessTransport;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
@@ -112,7 +113,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentites( int max, Integer page, Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( int max, Integer page, Integer size ) throws IdentityStoreException
     {
         _logger.debug( "Get all suspicious identities [max=" + max + "][page=" + page + "][size=" + size + "]" );
 
@@ -139,7 +140,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentites( int ruleId, int max, Integer page, Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( int ruleId, int max, Integer page, Integer size ) throws IdentityStoreException
     {
         _logger.debug( "Get all suspicious identities [ruleId=" + ruleId + "][max=" + max + "][page=" + page + "][size=" + size + "]" );
 
@@ -176,6 +177,35 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         {
             throw new IdentityStoreException( "Client code is mandatory." );
         }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public DuplicateSearchResponse getDuplicates( final String customerId, final int ruleId, final String strApplicationCode, final int max, final Integer page,
+            final Integer size ) throws IdentityStoreException
+    {
+        _logger.debug( "Get all duplicates for identity [customerId=" + customerId + "[ruleId=" + ruleId + "][max=" + max + "][page=" + page + "][size=" + size
+                + "]" );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
+        final Map<String, String> mapParams = new HashMap<>( );
+        mapParams.put( Constants.PARAM_MAX, String.valueOf( max ) );
+        if ( page != null )
+        {
+            mapParams.put( Constants.PARAM_PAGE, page.toString( ) );
+        }
+        if ( size != null )
+        {
+            mapParams.put( Constants.PARAM_SIZE, size.toString( ) );
+        }
+
+        final DuplicateSearchResponse response = _httpTransport.doGet( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH
+                + "/" + Constants.DUPLICATE_PATH + "/" + customerId + "?rule_id=" + ruleId, mapParams, mapHeadersRequest, DuplicateSearchResponse.class,
+                _mapper );
+        return response;
     }
 
 }
