@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
@@ -206,6 +208,41 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
                 + "/" + Constants.DUPLICATE_PATH + "/" + customerId + "?rule_id=" + ruleId, mapParams, mapHeadersRequest, DuplicateSearchResponse.class,
                 _mapper );
         return response;
+    }
+
+    @Override
+    public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
+            throws IdentityStoreException
+    {
+        checkExcludeRequest( request );
+        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) + "] for [ruleId="
+                + request.getRuleId( ) + "]" );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final SuspiciousIdentityExcludeResponse response = _httpTransport.doPutJSON(
+                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.EXCLUSION_PATH, mapParams, mapHeadersRequest,
+                request, SuspiciousIdentityExcludeResponse.class, _mapper );
+
+        return response;
+    }
+
+    /**
+     * Check whether the parameters related to the Suspicious Identity Exclude request are valid or not
+     *
+     * @param request
+     *            the Suspicious Identity Exclude request
+     * @throws IdentityStoreException
+     *             if the parameters are not valid
+     */
+    private void checkExcludeRequest( final SuspiciousIdentityExcludeRequest request ) throws IdentityStoreException
+    {
+        if ( request == null || StringUtils.isAnyBlank( request.getIdentityCuid1( ), request.getIdentityCuid2( ) ) || request.getRuleId( ) == null )
+        {
+            throw new IdentityStoreException( "Provided Suspicious Identity Exclude request is null or not properly filled." );
+        }
     }
 
 }

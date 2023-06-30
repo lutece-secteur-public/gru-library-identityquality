@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
@@ -103,4 +105,15 @@ public interface IIdentityQualityTransportProvider
     DuplicateSearchResponse getDuplicates( final String customerId, final int ruleId, final String strApplicationCode, final int max, final Integer page,
             final Integer size ) throws IdentityStoreException;
 
+    /**
+     * Exclude identities from duplicate suspicions.
+     * 
+     * @param request
+     *            a valid SuspiciousIdentityExcludeRequest
+     * @param strApplicationCode
+     *            the application code
+     * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
+     */
+    SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
+            throws IdentityStoreException;
 }
