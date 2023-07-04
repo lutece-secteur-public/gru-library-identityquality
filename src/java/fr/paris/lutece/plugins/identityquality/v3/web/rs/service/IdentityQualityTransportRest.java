@@ -33,18 +33,15 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 
+import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.AbstractTransportRest;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.HttpAccessTransport;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -170,7 +167,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      *
      * @param strClientCode
      *            the strClientCode
-     * @throws AppException
+     * @throws IdentityStoreException
      *             if the parameters are not valid
      */
     public void checkClientCode( String strClientCode ) throws IdentityStoreException
