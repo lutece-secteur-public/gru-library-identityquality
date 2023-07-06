@@ -35,10 +35,13 @@ package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -63,9 +66,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     private String _strIdentityStoreQualityEndPoint;
 
     /**
-<<<<<<< HEAD
-=======
-     * Simple Constructor
+     * <<<<<<< HEAD ======= Simple Constructor
      */
     public IdentityQualityTransportRest( )
     {
@@ -73,8 +74,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     }
 
     /**
->>>>>>> 4bf9a61 (#238 put id-quality services in separate plugin)
-     * Constructor with IHttpTransportProvider parameter
+     * >>>>>>> 4bf9a61 (#238 put id-quality services in separate plugin) Constructor with IHttpTransportProvider parameter
      *
      * @param httpTransport
      *            the provider to use
@@ -82,7 +82,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public IdentityQualityTransportRest( final IHttpTransportProvider httpTransport )
     {
         super( httpTransport );
-        
+
         _strIdentityStoreQualityEndPoint = httpTransport.getApiEndPointUrl( );
     }
 
@@ -161,7 +161,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 
         return response;
     }
-    
+
     /**
      * check whether the parameters related to the identity are valid or not
      *
@@ -220,8 +220,25 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         final Map<String, String> mapParams = new HashMap<>( );
 
         final SuspiciousIdentityExcludeResponse response = _httpTransport.doPutJSON(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.EXCLUSION_PATH, mapParams, mapHeadersRequest,
-                request, SuspiciousIdentityExcludeResponse.class, _mapper );
+                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.EXCLUSION_PATH, mapParams,
+                mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
+
+        return response;
+    }
+
+    @Override
+    public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strApplicationCode ) throws IdentityStoreException
+    {
+        checkLockRequest( request );
+        _logger.debug( "Manage lock identity [cuid=" + request.getCustomerId( ) + "] with [locked=" + request.isLocked( ) + "]" );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final SuspiciousIdentityLockResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH, mapParams, mapHeadersRequest,
+                request, SuspiciousIdentityLockResponse.class, _mapper );
 
         return response;
     }
@@ -236,9 +253,48 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      */
     private void checkExcludeRequest( final SuspiciousIdentityExcludeRequest request ) throws IdentityStoreException
     {
+        this.checkOrigin( request.getOrigin( ) );
         if ( request == null || StringUtils.isAnyBlank( request.getIdentityCuid1( ), request.getIdentityCuid2( ) ) || request.getRuleId( ) == null )
         {
             throw new IdentityStoreException( "Provided Suspicious Identity Exclude request is null or not properly filled." );
+        }
+    }
+
+    /**
+     * Check whether the parameters related to the Suspicious Identity Lock request are valid or not
+     *
+     * @param request
+     *            the Suspicious Identity Lock request
+     * @throws IdentityStoreException
+     *             if the parameters are not valid
+     */
+    private void checkLockRequest( final SuspiciousIdentityLockRequest request ) throws IdentityStoreException
+    {
+        this.checkOrigin( request.getOrigin( ) );
+        if ( request == null || StringUtils.isEmpty( request.getCustomerId( ) ) )
+        {
+            throw new IdentityStoreException( "Provided Suspicious Identity Lock request is null or not properly filled." );
+        }
+    }
+
+    /**
+     * Check whether the parameters related to the Suspicious Identity Lock request are valid or not
+     *
+     * @param author
+     *            the author
+     * @throws IdentityStoreException
+     *             if the parameters are not valid
+     */
+    private void checkOrigin( final RequestAuthor author ) throws IdentityStoreException
+    {
+        if ( author == null )
+        {
+            throw new IdentityStoreException( "Provided Author is null" );
+        }
+
+        if ( StringUtils.isEmpty( author.getName( ) ) || author.getType( ) == null )
+        {
+            throw new IdentityStoreException( "Author and author type fields shall be set" );
         }
     }
 

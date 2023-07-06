@@ -37,6 +37,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
@@ -116,4 +118,15 @@ public interface IIdentityQualityTransportProvider
      */
     SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
             throws IdentityStoreException;
+
+    /**
+     * Lock duplicate suspicions.
+     *
+     * @param request
+     *            a valid {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest}
+     * @param strApplicationCode
+     *            the application code
+     * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
+     */
+    SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strApplicationCode ) throws IdentityStoreException;
 }

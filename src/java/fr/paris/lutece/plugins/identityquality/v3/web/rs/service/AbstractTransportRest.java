@@ -61,7 +61,7 @@ public abstract class AbstractTransportRest
      * 
      * @param transportProvider
      */
-    protected AbstractTransportRest(final IHttpTransportProvider transportProvider )
+    protected AbstractTransportRest( final IHttpTransportProvider transportProvider )
     {
         super( );
         this._httpTransport = transportProvider;
