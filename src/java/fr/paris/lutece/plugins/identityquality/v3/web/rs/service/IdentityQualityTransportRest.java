@@ -35,17 +35,15 @@ package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.SuspiciousIdentityRequestValidator;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -66,7 +64,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     private String _strIdentityStoreQualityEndPoint;
 
     /**
-     * <<<<<<< HEAD ======= Simple Constructor
+     * Simple Constructor
      */
     public IdentityQualityTransportRest( )
     {
@@ -74,7 +72,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     }
 
     /**
-     * >>>>>>> 4bf9a61 (#238 put id-quality services in separate plugin) Constructor with IHttpTransportProvider parameter
+     * Constructor with IHttpTransportProvider parameter
      *
      * @param httpTransport
      *            the provider to use
@@ -90,14 +88,14 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode ) throws IdentityStoreException
+    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode ) throws IdentityStoreException
     {
-        _logger.debug( "Get duplicate rules of " + strApplicationCode );
+        _logger.debug( "Get duplicate rules of " + strClientCode );
 
-        this.checkClientCode( strApplicationCode );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         final Map<String, String> mapParams = new HashMap<>( );
 
@@ -139,6 +137,28 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
+    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientAppCode )
+            throws IdentityStoreException
+    {
+        _logger.debug( "Create suspicious identity [cuid=" + request.getSuspiciousIdentity( ).getCustomerId( ) + "]" );
+        SuspiciousIdentityRequestValidator.instance( ).checkClientApplication( strClientAppCode );
+        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
+        SuspiciousIdentityRequestValidator.instance( ).checkCustomerId( request.getSuspiciousIdentity( ).getCustomerId( ) );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final SuspiciousIdentityChangeResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH, mapParams,
+                mapHeadersRequest, request, SuspiciousIdentityChangeResponse.class, _mapper );
+
+        return response;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SuspiciousIdentitySearchResponse getSuspiciousIdentities( int ruleId, int max, Integer page, Integer size ) throws IdentityStoreException
     {
         _logger.debug( "Get all suspicious identities [ruleId=" + ruleId + "][max=" + max + "][page=" + page + "][size=" + size + "]" );
@@ -160,22 +180,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
                 mapParams, mapHeadersRequest, SuspiciousIdentitySearchResponse.class, _mapper );
 
         return response;
-    }
-
-    /**
-     * check whether the parameters related to the identity are valid or not
-     *
-     * @param strClientCode
-     *            the strClientCode
-     * @throws IdentityStoreException
-     *             if the parameters are not valid
-     */
-    public void checkClientCode( String strClientCode ) throws IdentityStoreException
-    {
-        if ( StringUtils.isBlank( strClientCode ) )
-        {
-            throw new IdentityStoreException( "Client code is mandatory." );
-        }
     }
 
     /**
@@ -211,9 +215,8 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
             throws IdentityStoreException
     {
-        checkExcludeRequest( request );
-        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) + "] for [ruleId="
-                + request.getRuleId( ) + "]" );
+        IdentityRequestValidator.instance( ).checkOrigin( request );
+        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
@@ -227,13 +230,13 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     }
 
     @Override
-    public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strApplicationCode ) throws IdentityStoreException
+    public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode ) throws IdentityStoreException
     {
-        checkLockRequest( request );
+        SuspiciousIdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
         _logger.debug( "Manage lock identity [cuid=" + request.getCustomerId( ) + "] with [locked=" + request.isLocked( ) + "]" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
         final Map<String, String> mapParams = new HashMap<>( );
 
         final SuspiciousIdentityLockResponse response = _httpTransport.doPostJSON(
@@ -242,60 +245,4 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 
         return response;
     }
-
-    /**
-     * Check whether the parameters related to the Suspicious Identity Exclude request are valid or not
-     *
-     * @param request
-     *            the Suspicious Identity Exclude request
-     * @throws IdentityStoreException
-     *             if the parameters are not valid
-     */
-    private void checkExcludeRequest( final SuspiciousIdentityExcludeRequest request ) throws IdentityStoreException
-    {
-        this.checkOrigin( request.getOrigin( ) );
-        if ( request == null || StringUtils.isAnyBlank( request.getIdentityCuid1( ), request.getIdentityCuid2( ) ) || request.getRuleId( ) == null )
-        {
-            throw new IdentityStoreException( "Provided Suspicious Identity Exclude request is null or not properly filled." );
-        }
-    }
-
-    /**
-     * Check whether the parameters related to the Suspicious Identity Lock request are valid or not
-     *
-     * @param request
-     *            the Suspicious Identity Lock request
-     * @throws IdentityStoreException
-     *             if the parameters are not valid
-     */
-    private void checkLockRequest( final SuspiciousIdentityLockRequest request ) throws IdentityStoreException
-    {
-        this.checkOrigin( request.getOrigin( ) );
-        if ( request == null || StringUtils.isEmpty( request.getCustomerId( ) ) )
-        {
-            throw new IdentityStoreException( "Provided Suspicious Identity Lock request is null or not properly filled." );
-        }
-    }
-
-    /**
-     * Check whether the parameters related to the Suspicious Identity Lock request are valid or not
-     *
-     * @param author
-     *            the author
-     * @throws IdentityStoreException
-     *             if the parameters are not valid
-     */
-    private void checkOrigin( final RequestAuthor author ) throws IdentityStoreException
-    {
-        if ( author == null )
-        {
-            throw new IdentityStoreException( "Provided Author is null" );
-        }
-
-        if ( StringUtils.isEmpty( author.getName( ) ) || author.getType( ) == null )
-        {
-            throw new IdentityStoreException( "Author and author type fields shall be set" );
-        }
-    }
-
 }

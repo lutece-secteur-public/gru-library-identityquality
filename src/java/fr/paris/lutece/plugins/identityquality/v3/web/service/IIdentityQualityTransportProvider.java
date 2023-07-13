@@ -33,9 +33,7 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.service;
 
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
@@ -70,6 +68,17 @@ public interface IIdentityQualityTransportProvider
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
     SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size ) throws IdentityStoreException;
+
+    /**
+     * Report a suspicious identity
+     * 
+     * @param suspiciousIdentityChangeRequest
+     * @param strClientAppCode
+     * @return
+     * @throws IdentityStoreException
+     */
+    SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest suspiciousIdentityChangeRequest, String strClientAppCode )
+            throws IdentityStoreException;
 
     /**
      * Get list of suspicious identities for a given rule ID

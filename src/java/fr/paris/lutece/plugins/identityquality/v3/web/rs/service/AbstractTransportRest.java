@@ -36,6 +36,9 @@ package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
 /**
  *

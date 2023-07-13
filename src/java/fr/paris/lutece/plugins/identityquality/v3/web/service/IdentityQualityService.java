@@ -33,9 +33,7 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.service;
 
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
@@ -80,6 +78,20 @@ public class IdentityQualityService
     public void setTransportProvider( final IIdentityQualityTransportProvider transportProvider )
     {
         this._transportProvider = transportProvider;
+    }
+
+    /**
+     * Report a suspicious identity
+     * 
+     * @param request
+     * @param strClientAppCode
+     * @return
+     * @throws IdentityStoreException
+     */
+    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientAppCode )
+            throws IdentityStoreException
+    {
+        return this._transportProvider.createSuspiciousIdentity( request, strClientAppCode );
     }
 
     /**
