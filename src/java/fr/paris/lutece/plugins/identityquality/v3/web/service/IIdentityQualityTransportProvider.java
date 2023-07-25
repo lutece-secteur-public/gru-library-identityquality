@@ -51,10 +51,12 @@ public interface IIdentityQualityTransportProvider
      *
      * @param strApplicationCode
      *            - the application code
+     * @param priority
+     *            - the minimal priority of rules to return
      * @return DuplicateRuleSummarySearchResponse containing a list of <code>DuplicateRuleSummaryDto</code>.
      * @throws IdentityStoreException
      */
-    DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode ) throws IdentityStoreException;
+    DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode, final Integer priority ) throws IdentityStoreException;
 
     /**
      * Get full list of suspicious identities
@@ -65,9 +67,12 @@ public interface IIdentityQualityTransportProvider
      *            page to return
      * @param size
      *            number of results per page
+     * @param priority
+     *            minimal priority of rules that identified the suspicious identities to return
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size ) throws IdentityStoreException;
+    SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size, final Integer priority )
+            throws IdentityStoreException;
 
     /**
      * Report a suspicious identity

@@ -88,7 +88,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode ) throws IdentityStoreException
+    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final Integer priority ) throws IdentityStoreException
     {
         _logger.debug( "Get duplicate rules of " + strClientCode );
 
@@ -98,6 +98,10 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         final Map<String, String> mapParams = new HashMap<>( );
+        if ( priority != null )
+        {
+            mapParams.put( Constants.PARAM_RULE_PRIORITY, priority.toString( ) );
+        }
 
         final DuplicateRuleSummarySearchResponse response = _httpTransport.doGet(
                 _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.RULES_PATH, mapParams,
@@ -110,9 +114,9 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( int max, Integer page, Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( int max, Integer page, Integer size, Integer priority ) throws IdentityStoreException
     {
-        _logger.debug( "Get all suspicious identities [max=" + max + "][page=" + page + "][size=" + size + "]" );
+        _logger.debug( "Get all suspicious identities [max=" + max + "][page=" + page + "][size=" + size + "][priority=" + priority + "]" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         final Map<String, String> mapParams = new HashMap<>( );
@@ -124,6 +128,10 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         if ( size != null )
         {
             mapParams.put( Constants.PARAM_SIZE, size.toString( ) );
+        }
+        if ( priority != null )
+        {
+            mapParams.put( Constants.PARAM_RULE_PRIORITY, priority.toString( ) );
         }
 
         final SuspiciousIdentitySearchResponse response = _httpTransport.doGet(

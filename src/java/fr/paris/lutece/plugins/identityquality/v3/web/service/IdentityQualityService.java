@@ -99,12 +99,14 @@ public class IdentityQualityService
      *
      * @param strApplicationCode
      *            - the application code
+     * @param priority
+     *            - the minimal priority of rules to return
      * @return DuplicateRuleSummarySearchResponse containing a list of <code>DuplicateRuleSummaryDto</code>.
      * @throws IdentityStoreException
      */
-    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode ) throws IdentityStoreException
+    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode, final Integer priority ) throws IdentityStoreException
     {
-        return this._transportProvider.getAllDuplicateRules( strApplicationCode );
+        return this._transportProvider.getAllDuplicateRules( strApplicationCode, priority );
     }
 
     /**
@@ -116,11 +118,14 @@ public class IdentityQualityService
      *            page to return
      * @param size
      *            number of results per page
+     * @param priority
+     *            minimal priority of rules that identified the suspicious identities to return
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size, final Integer priority )
+            throws IdentityStoreException
     {
-        return this._transportProvider.getAllSuspiciousIdentities( max, page, size );
+        return this._transportProvider.getAllSuspiciousIdentities( max, page, size, priority );
     }
 
     /**
