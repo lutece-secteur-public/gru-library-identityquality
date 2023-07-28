@@ -131,8 +131,8 @@ public class IdentityQualityService
     /**
      * Get list of suspicious identities for a given rule ID
      * 
-     * @param ruleId
-     *            the duplicate rule ID
+     * @param ruleCode
+     *            the duplicate rule code
      * @param max
      *            maximum number of results
      * @param page
@@ -141,10 +141,10 @@ public class IdentityQualityService
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final int ruleId, final int max, final Integer page, final Integer size )
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final String ruleCode, final int max, final Integer page, final Integer size )
             throws IdentityStoreException
     {
-        return this._transportProvider.getSuspiciousIdentities( ruleId, max, page, size );
+        return this._transportProvider.getSuspiciousIdentities( ruleCode, max, page, size );
     }
 
     /**
@@ -152,8 +152,8 @@ public class IdentityQualityService
      * 
      * @param customerId
      *            the customer ID of the identity
-     * @param ruleId
-     *            the rule ID
+     * @param ruleCode
+     *            the rule code
      * @param strApplicationCode
      *            the application code
      * @param max
@@ -164,10 +164,10 @@ public class IdentityQualityService
      *            number of results per page
      * @return DuplicateSearchResponse containing a list of {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity}
      */
-    public DuplicateSearchResponse getDuplicates( final String customerId, final int ruleId, final String strApplicationCode, final int max, final Integer page,
+    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max, final Integer page,
             final Integer size ) throws IdentityStoreException
     {
-        return this._transportProvider.getDuplicates( customerId, ruleId, strApplicationCode, max, page, size );
+        return this._transportProvider.getDuplicates( customerId, ruleCode, strApplicationCode, max, page, size );
     }
 
     /**

@@ -88,7 +88,7 @@ public interface IIdentityQualityTransportProvider
     /**
      * Get list of suspicious identities for a given rule ID
      * 
-     * @param ruleId
+     * @param ruleCode
      *            the duplicate rule ID
      * @param max
      *            maximum number of results
@@ -98,7 +98,7 @@ public interface IIdentityQualityTransportProvider
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final int ruleId, final int max, final Integer page, final Integer size )
+    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final String ruleCode, final int max, final Integer page, final Integer size )
             throws IdentityStoreException;
 
     /**
@@ -106,8 +106,8 @@ public interface IIdentityQualityTransportProvider
      * 
      * @param customerId
      *            the customer ID of the identity
-     * @param ruleId
-     *            the rule ID
+     * @param ruleCode
+     *            the rule code
      * @param strApplicationCode
      *            the application code
      * @param max
@@ -118,7 +118,7 @@ public interface IIdentityQualityTransportProvider
      *            number of results per page
      * @return DuplicateSearchResponse containing a list of {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity}
      */
-    DuplicateSearchResponse getDuplicates( final String customerId, final int ruleId, final String strApplicationCode, final int max, final Integer page,
+    DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max, final Integer page,
             final Integer size ) throws IdentityStoreException;
 
     /**
