@@ -164,8 +164,8 @@ public class IdentityQualityService
      *            number of results per page
      * @return DuplicateSearchResponse containing a list of {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity}
      */
-    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max, final Integer page,
-            final Integer size ) throws IdentityStoreException
+    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max,
+            final Integer page, final Integer size ) throws IdentityStoreException
     {
         return this._transportProvider.getDuplicates( customerId, ruleCode, strApplicationCode, max, page, size );
     }

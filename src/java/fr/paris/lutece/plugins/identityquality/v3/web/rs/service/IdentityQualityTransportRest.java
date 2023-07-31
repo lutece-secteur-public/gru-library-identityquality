@@ -167,7 +167,8 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final String ruleCode, final int max, final Integer page, final Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final String ruleCode, final int max, final Integer page, final Integer size )
+            throws IdentityStoreException
     {
         _logger.debug( "Get all suspicious identities [ruleCode=" + ruleCode + "][max=" + max + "][page=" + page + "][size=" + size + "]" );
 
@@ -194,11 +195,11 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max, final Integer page,
-            final Integer size ) throws IdentityStoreException
+    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max,
+            final Integer page, final Integer size ) throws IdentityStoreException
     {
-        _logger.debug( "Get all duplicates for identity [customerId=" + customerId + "[ruleCode=" + ruleCode + "][max=" + max + "][page=" + page + "][size=" + size
-                + "]" );
+        _logger.debug( "Get all duplicates for identity [customerId=" + customerId + "[ruleCode=" + ruleCode + "][max=" + max + "][page=" + page + "][size="
+                + size + "]" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
@@ -213,25 +214,23 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
             mapParams.put( Constants.PARAM_SIZE, size.toString( ) );
         }
 
-        return _httpTransport.doGet( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH
-                + "/" + Constants.DUPLICATE_PATH + "/" + customerId + "?" + Constants.PARAM_RULE_CODE + "=" + ruleCode, mapParams, mapHeadersRequest, DuplicateSearchResponse.class,
-                _mapper );
+        return _httpTransport.doGet( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH
+                + "/" + customerId + "?" + Constants.PARAM_RULE_CODE + "=" + ruleCode, mapParams, mapHeadersRequest, DuplicateSearchResponse.class, _mapper );
     }
 
     @Override
     public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
             throws IdentityStoreException
     {
-        SuspiciousIdentityRequestValidator.instance( ).checkOrigin( request.getOrigin() );
+        SuspiciousIdentityRequestValidator.instance( ).checkOrigin( request.getOrigin( ) );
         _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
         final Map<String, String> mapParams = new HashMap<>( );
 
-        return _httpTransport.doPutJSON(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.EXCLUSION_PATH, mapParams,
-                mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
+        return _httpTransport.doPutJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.EXCLUSION_PATH,
+                mapParams, mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
     }
 
     @Override
@@ -244,8 +243,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
         final Map<String, String> mapParams = new HashMap<>( );
 
-        return _httpTransport.doPostJSON(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH, mapParams, mapHeadersRequest,
-                request, SuspiciousIdentityLockResponse.class, _mapper );
+        return _httpTransport.doPostJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH,
+                mapParams, mapHeadersRequest, request, SuspiciousIdentityLockResponse.class, _mapper );
     }
 }
