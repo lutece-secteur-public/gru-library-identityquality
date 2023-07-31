@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.SuspiciousIdentityRequestValidator;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.SuspiciousIdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
@@ -222,7 +222,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
             throws IdentityStoreException
     {
-        IdentityRequestValidator.instance( ).checkOrigin( request );
+        SuspiciousIdentityRequestValidator.instance( ).checkOrigin( request.getOrigin() );
         _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
