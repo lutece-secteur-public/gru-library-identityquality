@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * IdentityQualityRestClientService
@@ -114,37 +115,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( int max, Integer page, Integer size, Integer priority ) throws IdentityStoreException
-    {
-        _logger.debug( "Get all suspicious identities [max=" + max + "][page=" + page + "][size=" + size + "][priority=" + priority + "]" );
-
-        final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        final Map<String, String> mapParams = new HashMap<>( );
-        mapParams.put( Constants.PARAM_MAX, String.valueOf( max ) );
-        if ( page != null )
-        {
-            mapParams.put( Constants.PARAM_PAGE, page.toString( ) );
-        }
-        if ( size != null )
-        {
-            mapParams.put( Constants.PARAM_SIZE, size.toString( ) );
-        }
-        if ( priority != null )
-        {
-            mapParams.put( Constants.PARAM_RULE_PRIORITY, priority.toString( ) );
-        }
-
-        final SuspiciousIdentitySearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH, mapParams,
-                mapHeadersRequest, SuspiciousIdentitySearchResponse.class, _mapper );
-
-        return response;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientAppCode )
             throws IdentityStoreException
     {
@@ -167,12 +137,20 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final String ruleCode, final int max, final Integer page, final Integer size )
-            throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientAppCode,
+            final int max, final Integer page, final Integer size ) throws IdentityStoreException
     {
-        _logger.debug( "Get all suspicious identities [ruleCode=" + ruleCode + "][max=" + max + "][page=" + page + "][size=" + size + "]" );
+        SuspiciousIdentityRequestValidator.instance( ).checkClientApplication( strClientAppCode );
+        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentitySearch( request );
+
+        _logger.debug( "Get all suspicious identities [ruleCode="
+                + request.getRuleCode( ) + "][attributes=[ " + request.getAttributes( ).stream( )
+                        .map( a -> "[key=" + a.getKey( ) + "][value=" + a.getValue( ) + "]" ).collect( Collectors.joining( " ],[ " ) )
+                + "]][max=" + max + "][page=" + page + "][size=" + size + "]" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientAppCode );
+
         final Map<String, String> mapParams = new HashMap<>( );
         mapParams.put( Constants.PARAM_MAX, String.valueOf( max ) );
         if ( page != null )
@@ -184,9 +162,9 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
             mapParams.put( Constants.PARAM_SIZE, size.toString( ) );
         }
 
-        final SuspiciousIdentitySearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH + "/" + ruleCode,
-                mapParams, mapHeadersRequest, SuspiciousIdentitySearchResponse.class, _mapper );
+        final SuspiciousIdentitySearchResponse response = _httpTransport.doPostJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3
+                + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH + Constants.SEARCH_IDENTITIES_PATH, mapParams, mapHeadersRequest, request,
+                SuspiciousIdentitySearchResponse.class, _mapper );
 
         return response;
     }

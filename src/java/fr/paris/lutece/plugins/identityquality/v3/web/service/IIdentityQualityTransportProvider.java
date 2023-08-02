@@ -59,22 +59,6 @@ public interface IIdentityQualityTransportProvider
     DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode, final Integer priority ) throws IdentityStoreException;
 
     /**
-     * Get full list of suspicious identities
-     * 
-     * @param max
-     *            maximum number of results
-     * @param page
-     *            page to return
-     * @param size
-     *            number of results per page
-     * @param priority
-     *            minimal priority of rules that identified the suspicious identities to return
-     * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
-     */
-    SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size, final Integer priority )
-            throws IdentityStoreException;
-
-    /**
      * Report a suspicious identity
      * 
      * @param suspiciousIdentityChangeRequest
@@ -88,8 +72,10 @@ public interface IIdentityQualityTransportProvider
     /**
      * Get list of suspicious identities for a given rule ID
      * 
-     * @param ruleCode
-     *            the duplicate rule ID
+     * @param request
+     *            the SuspiciousIdentitySearchRequest
+     * @param strClientAppCode
+     *            the client app code
      * @param max
      *            maximum number of results
      * @param page
@@ -98,8 +84,8 @@ public interface IIdentityQualityTransportProvider
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final String ruleCode, final int max, final Integer page, final Integer size )
-            throws IdentityStoreException;
+    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientAppCode, final int max,
+            final Integer page, final Integer size ) throws IdentityStoreException;
 
     /**
      * Get list of identities that are duplicates of the provided customerId's identity, according to the provided rule ID.

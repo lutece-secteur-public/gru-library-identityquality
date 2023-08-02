@@ -110,29 +110,12 @@ public class IdentityQualityService
     }
 
     /**
-     * Get full list of suspicious identities
-     * 
-     * @param max
-     *            maximum number of results
-     * @param page
-     *            page to return
-     * @param size
-     *            number of results per page
-     * @param priority
-     *            minimal priority of rules that identified the suspicious identities to return
-     * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
-     */
-    public SuspiciousIdentitySearchResponse getAllSuspiciousIdentities( final int max, final Integer page, final Integer size, final Integer priority )
-            throws IdentityStoreException
-    {
-        return this._transportProvider.getAllSuspiciousIdentities( max, page, size, priority );
-    }
-
-    /**
-     * Get list of suspicious identities for a given rule ID
-     * 
-     * @param ruleCode
-     *            the duplicate rule code
+     * Get list of suspicious identities for a given request
+     *
+     * @param request
+     *            the SuspiciousIdentitySearchRequest
+     * @param strClientAppCode
+     *            the client app code
      * @param max
      *            maximum number of results
      * @param page
@@ -141,10 +124,10 @@ public class IdentityQualityService
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final String ruleCode, final int max, final Integer page, final Integer size )
-            throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientAppCode,
+            final int max, final Integer page, final Integer size ) throws IdentityStoreException
     {
-        return this._transportProvider.getSuspiciousIdentities( ruleCode, max, page, size );
+        return this._transportProvider.getSuspiciousIdentities( request, strClientAppCode, max, page, size );
     }
 
     /**
