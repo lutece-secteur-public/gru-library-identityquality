@@ -120,6 +120,18 @@ public interface IIdentityQualityTransportProvider
             throws IdentityStoreException;
 
     /**
+     * Cancel identities exclusion from duplicate suspicions.
+     *
+     * @param request
+     *            a valid SuspiciousIdentityExcludeRequest
+     * @param strApplicationCode
+     *            the application code
+     * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
+     */
+    SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( SuspiciousIdentityExcludeRequest request, String strApplicationCode )
+            throws IdentityStoreException;
+
+    /**
      * Lock duplicate suspicions.
      *
      * @param request

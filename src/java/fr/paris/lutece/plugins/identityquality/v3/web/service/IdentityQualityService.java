@@ -169,6 +169,21 @@ public class IdentityQualityService
     }
 
     /**
+     * Cancel identities exclusion from duplicate suspicions.
+     *
+     * @param request
+     *            a valid SuspiciousIdentityExcludeRequest
+     * @param strApplicationCode
+     *            the application code
+     * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
+     */
+    public SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
+            throws IdentityStoreException
+    {
+        return this._transportProvider.cancelIdentitiesExclusion( request, strApplicationCode );
+    }
+
+    /**
      * Exclude identities from duplicate suspicions.
      *
      * @param request

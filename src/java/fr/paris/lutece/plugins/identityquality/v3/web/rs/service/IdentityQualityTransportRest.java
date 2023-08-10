@@ -212,6 +212,22 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     }
 
     @Override
+    public SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
+            throws IdentityStoreException
+    {
+        SuspiciousIdentityRequestValidator.instance( ).checkOrigin( request.getOrigin( ) );
+        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        return _httpTransport.doPostJSON(
+                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.EXCLUSION_PATH, mapParams,
+                mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
+    }
+
+    @Override
     public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode ) throws IdentityStoreException
     {
         SuspiciousIdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
