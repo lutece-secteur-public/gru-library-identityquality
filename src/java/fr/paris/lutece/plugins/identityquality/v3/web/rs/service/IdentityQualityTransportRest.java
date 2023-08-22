@@ -115,15 +115,16 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientAppCode )
+    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientCode )
             throws IdentityStoreException
     {
         _logger.debug( "Create suspicious identity [cuid=" + request.getSuspiciousIdentity( ).getCustomerId( ) + "]" );
-        SuspiciousIdentityRequestValidator.instance( ).checkClientApplication( strClientAppCode );
+        SuspiciousIdentityRequestValidator.instance( ).checkClientCode( strClientCode );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
         SuspiciousIdentityRequestValidator.instance( ).checkCustomerId( request.getSuspiciousIdentity( ).getCustomerId( ) );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
         final Map<String, String> mapParams = new HashMap<>( );
 
         final SuspiciousIdentityChangeResponse response = _httpTransport.doPostJSON(
@@ -137,10 +138,10 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientAppCode,
-            final int max, final Integer page, final Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode, final int max,
+            final Integer page, final Integer size ) throws IdentityStoreException
     {
-        SuspiciousIdentityRequestValidator.instance( ).checkClientApplication( strClientAppCode );
+        SuspiciousIdentityRequestValidator.instance( ).checkClientCode( strClientCode );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentitySearch( request );
 
         _logger.debug( "Get all suspicious identities [ruleCode="
@@ -149,7 +150,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
                 + "]][max=" + max + "][page=" + page + "][size=" + size + "]" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientAppCode );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         final Map<String, String> mapParams = new HashMap<>( );
         mapParams.put( Constants.PARAM_MAX, String.valueOf( max ) );
@@ -207,7 +208,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
         final Map<String, String> mapParams = new HashMap<>( );
 
-        return _httpTransport.doPutJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.EXCLUSION_PATH,
+        return _httpTransport.doPutJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.EXCLUSION_PATH,
                 mapParams, mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
     }
 
@@ -223,14 +224,14 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         final Map<String, String> mapParams = new HashMap<>( );
 
         return _httpTransport.doPostJSON(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.EXCLUSION_PATH, mapParams,
+                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH +  Constants.CANCEL_IDENTITIES_EXCLUSION_PATH, mapParams,
                 mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
     }
 
     @Override
     public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode ) throws IdentityStoreException
     {
-        SuspiciousIdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+        SuspiciousIdentityRequestValidator.instance( ).checkClientCode( strClientCode );
         _logger.debug( "Manage lock identity [cuid=" + request.getCustomerId( ) + "] with [locked=" + request.isLocked( ) + "]" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );

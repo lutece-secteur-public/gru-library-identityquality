@@ -62,11 +62,11 @@ public interface IIdentityQualityTransportProvider
      * Report a suspicious identity
      * 
      * @param suspiciousIdentityChangeRequest
-     * @param strClientAppCode
+     * @param strClientCode
      * @return
      * @throws IdentityStoreException
      */
-    SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest suspiciousIdentityChangeRequest, String strClientAppCode )
+    SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest suspiciousIdentityChangeRequest, String strClientCode )
             throws IdentityStoreException;
 
     /**
@@ -74,7 +74,7 @@ public interface IIdentityQualityTransportProvider
      * 
      * @param request
      *            the SuspiciousIdentitySearchRequest
-     * @param strClientAppCode
+     * @param strClientCode
      *            the client app code
      * @param max
      *            maximum number of results
@@ -84,7 +84,7 @@ public interface IIdentityQualityTransportProvider
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientAppCode, final int max,
+    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode, final int max,
             final Integer page, final Integer size ) throws IdentityStoreException;
 
     /**

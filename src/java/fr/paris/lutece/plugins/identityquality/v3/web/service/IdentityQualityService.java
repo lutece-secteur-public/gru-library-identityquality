@@ -84,29 +84,29 @@ public class IdentityQualityService
      * Report a suspicious identity
      * 
      * @param request
-     * @param strClientAppCode
+     * @param strClientCode
      * @return
      * @throws IdentityStoreException
      */
-    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientAppCode )
+    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientCode )
             throws IdentityStoreException
     {
-        return this._transportProvider.createSuspiciousIdentity( request, strClientAppCode );
+        return this._transportProvider.createSuspiciousIdentity( request, strClientCode );
     }
 
     /**
      * Get full list of duplicate rules.
      *
-     * @param strApplicationCode
-     *            - the application code
+     * @param strClientCode
+     *            - the client code
      * @param priority
      *            - the minimal priority of rules to return
      * @return DuplicateRuleSummarySearchResponse containing a list of <code>DuplicateRuleSummaryDto</code>.
      * @throws IdentityStoreException
      */
-    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode, final Integer priority ) throws IdentityStoreException
+    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final Integer priority ) throws IdentityStoreException
     {
-        return this._transportProvider.getAllDuplicateRules( strApplicationCode, priority );
+        return this._transportProvider.getAllDuplicateRules( strClientCode, priority );
     }
 
     /**
@@ -114,7 +114,7 @@ public class IdentityQualityService
      *
      * @param request
      *            the SuspiciousIdentitySearchRequest
-     * @param strClientAppCode
+     * @param strClientCode
      *            the client app code
      * @param max
      *            maximum number of results
@@ -124,10 +124,10 @@ public class IdentityQualityService
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientAppCode,
-            final int max, final Integer page, final Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode, final int max,
+            final Integer page, final Integer size ) throws IdentityStoreException
     {
-        return this._transportProvider.getSuspiciousIdentities( request, strClientAppCode, max, page, size );
+        return this._transportProvider.getSuspiciousIdentities( request, strClientCode, max, page, size );
     }
 
     /**
@@ -188,13 +188,12 @@ public class IdentityQualityService
      *
      * @param request
      *            a valid {@link SuspiciousIdentityLockRequest}
-     * @param strApplicationCode
-     *            the application code
+     * @param strClientCode
+     *            the client code
      * @return SuspiciousIdentityLockResponse containing the status of the exclusion
      */
-    public SuspiciousIdentityLockResponse lockIdentity( final SuspiciousIdentityLockRequest request, final String strApplicationCode )
-            throws IdentityStoreException
+    public SuspiciousIdentityLockResponse lockIdentity( final SuspiciousIdentityLockRequest request, final String strClientCode ) throws IdentityStoreException
     {
-        return this._transportProvider.lock( request, strApplicationCode );
+        return this._transportProvider.lock( request, strClientCode );
     }
 }
