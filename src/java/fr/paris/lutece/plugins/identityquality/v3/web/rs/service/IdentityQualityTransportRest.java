@@ -224,7 +224,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         final Map<String, String> mapParams = new HashMap<>( );
 
         return _httpTransport.doPostJSON(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH +  Constants.CANCEL_IDENTITIES_EXCLUSION_PATH, mapParams,
+                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.CANCEL_IDENTITIES_EXCLUSION_PATH, mapParams,
                 mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
     }
 
