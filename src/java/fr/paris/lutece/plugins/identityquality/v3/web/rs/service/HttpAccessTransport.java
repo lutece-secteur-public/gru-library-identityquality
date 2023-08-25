@@ -33,13 +33,18 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.CustomResponseStatusValidator;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IStatusType;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.error.ErrorResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.InvalidResponseStatus;
 import org.apache.commons.lang3.StringUtils;
@@ -49,9 +54,12 @@ import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * IHttpTransportProvider which use library-httpaccess
@@ -100,8 +108,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * @throws IdentityStoreException
      */
     @Override
-    public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
-            ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto<? extends IStatusType>> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+            Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
@@ -115,7 +123,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
             String strJSON = mapper.writeValueAsString( json );
             String strResponseJSON = this._httpClient.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
-            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+            oResponse = mapJson( mapper, strResponseJSON, responseJsonClass );
         }
         catch( Exception e )
         {
@@ -131,8 +139,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * @throws IdentityStoreException
      */
     @Override
-    public <T> T doPutJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
-            ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto<? extends IStatusType>> T doPutJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+            Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
@@ -146,7 +154,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
             String strJSON = mapper.writeValueAsString( json );
             String strResponseJSON = this._httpClient.doPutJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
-            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+            oResponse = mapJson( mapper, strResponseJSON, responseJsonClass );
         }
         catch( Exception e )
         {
@@ -162,15 +170,14 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * @throws IdentityStoreException
      */
     @Override
-    public <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
-            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto<? extends IStatusType>> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams,
+            Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
         mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
         List<T> oResponse = null;
-        JavaType responseJsonClassType = mapper.getTypeFactory( ).constructCollectionType( List.class, responseJsonClass );
 
         try
         {
@@ -178,7 +185,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
             String strJSON = mapper.writeValueAsString( json );
             String strResponseJSON = this._httpClient.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
-            oResponse = mapper.readValue( strResponseJSON, responseJsonClassType );
+            oResponse = mapJsonList( mapper, strResponseJSON, responseJsonClass );
         }
         catch( Exception e )
         {
@@ -189,72 +196,68 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
-            ObjectMapper mapper ) throws IdentityStoreException
-    {
-        T oResponse = null;
-
-        try
-        {
-            URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
-
-            if ( ( mapParams != null ) && !mapParams.isEmpty( ) )
-            {
-                for ( String strParamKey : mapParams.keySet( ) )
-                {
-                    uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
-                }
-            }
-
-            addAuthentication( mapHeadersRequest );
-
-            String strResponseJSON = this._httpClient.doGet( uriBuilder.toString( ), null, null, mapHeadersRequest );
-
-            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
-        }
-        catch( Exception e )
-        {
-            handleException( e );
-        }
-
-        return oResponse;
-    }
-
-    @Override
-    public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
-            ObjectMapper mapper ) throws IdentityStoreException
-    {
-        T oResponse = null;
-
-        try
-        {
-            URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
-
-            if ( ( mapParams != null ) && !mapParams.isEmpty( ) )
-            {
-                for ( String strParamKey : mapParams.keySet( ) )
-                {
-                    uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
-                }
-            }
-
-            addAuthentication( mapHeadersRequest );
-
-            String strResponseJSON = this._httpClient.doDelete( uriBuilder.toString( ), null, null, mapHeadersRequest, null );
-
-            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
-        }
-        catch( Exception e )
-        {
-            handleException( e );
-        }
-
-        return oResponse;
-    }
-
-    @Override
-    public <T> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+    public <T extends ResponseDto<? extends IStatusType>> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
             Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    {
+        T oResponse = null;
+
+        try
+        {
+            URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
+
+            if ( ( mapParams != null ) && !mapParams.isEmpty( ) )
+            {
+                for ( String strParamKey : mapParams.keySet( ) )
+                {
+                    uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
+                }
+            }
+
+            addAuthentication( mapHeadersRequest );
+            String strResponseJSON = this._httpClient.doGet( uriBuilder.toString( ), null, null, mapHeadersRequest );
+            oResponse = mapJson( mapper, strResponseJSON, responseJsonClass );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+
+    @Override
+    public <T extends ResponseDto<? extends IStatusType>> T doDelete( String strEndPointUrl, Map<String, String> mapParams,
+            Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    {
+        T oResponse = null;
+
+        try
+        {
+            URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
+
+            if ( ( mapParams != null ) && !mapParams.isEmpty( ) )
+            {
+                for ( String strParamKey : mapParams.keySet( ) )
+                {
+                    uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
+                }
+            }
+
+            addAuthentication( mapHeadersRequest );
+            String strResponseJSON = this._httpClient.doDelete( uriBuilder.toString( ), null, null, mapHeadersRequest, null );
+            oResponse = mapJson( mapper, strResponseJSON, responseJsonClass );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+
+    @Override
+    public <T extends ResponseDto<? extends IStatusType>> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams,
+            Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
@@ -276,10 +279,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
             addAuthentication( mapHeadersRequest );
             String strJSON = mapper.writeValueAsString( json );
-
             String strResponseJSON = this._httpClient.doDeleteJSON( uriBuilder.toString( ), strJSON, null, null, mapHeadersRequest, null );
-
-            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+            oResponse = mapJson( mapper, strResponseJSON, responseJsonClass );
         }
         catch( Exception e )
         {
@@ -349,4 +350,112 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         return _strEndPoint;
     }
+
+    /**
+     * Converts json String response to the desired {@link ResponseDto} subclass instance.
+     *
+     * @param mapper
+     *            the mapper
+     * @param jsonStr
+     *            the json string value
+     * @param responseClass
+     *            the desired {@link ResponseDto} subclass
+     * @return the desired {@link ResponseDto} subclass instance
+     */
+    private <T extends ResponseDto<? extends IStatusType>> T mapJson( final ObjectMapper mapper, final String jsonStr, final Class<T> responseClass )
+            throws JsonProcessingException, InstantiationException, IllegalAccessException
+    {
+        T response = null;
+        try
+        {
+            response = mapper.readValue( jsonStr, responseClass );
+        }
+        catch( final Exception e )
+        {
+            // If mapper didn't manage to map the json with the desired class, we try to map it as an error response
+            final ErrorResponse er = mapper.readValue( jsonStr, ErrorResponse.class );
+            if ( er != null )
+            {
+                // If it is an error response, we need to convert it to the desired response class
+                response = responseClass.newInstance( );
+                response.setMessage( er.getMessage( ) );
+                response.setResponseStatus( er.getResponseStatus( ) );
+                response.setI18nMessageKey( er.getI18nMessageKey( ) );
+            }
+        }
+        if ( response != null && StringUtils.isNotBlank( response.getI18nMessageKey( ) ) )
+        {
+            response.setLocalizedMessage( I18nService.getLocalizedString( response.getI18nMessageKey( ), Locale.getDefault( ) ) );
+        }
+        return response;
+    }
+
+    /**
+     * Converts json String response to a {@link List} of the desired {@link ResponseDto} subclass instances.
+     *
+     * @param mapper
+     *            the mapper
+     * @param jsonStr
+     *            the json string value
+     * @param responseClass
+     *            the desired {@link ResponseDto} subclass
+     * @return a {@link List} of the desired {@link ResponseDto} subclass instances
+     */
+    private <T extends ResponseDto<? extends IStatusType>> List<T> mapJsonList( final ObjectMapper mapper, final String jsonStr, final Class<T> responseClass )
+            throws JsonProcessingException, InstantiationException, IllegalAccessException
+    {
+        List<T> responseList = new ArrayList<>( );
+        JavaType responseListClassType = mapper.getTypeFactory( ).constructCollectionType( List.class, responseClass );
+        try
+        {
+            responseList = mapper.readValue( jsonStr, responseListClassType );
+        }
+        catch( final Exception e1 )
+        {
+            try
+            {
+                // If mapper didn't manage to map the json with the desired class, we try to map it as a list of error response
+                responseListClassType = mapper.getTypeFactory( ).constructCollectionType( List.class, ErrorResponse.class );
+                final List<ErrorResponse> errorResponseList = mapper.readValue( jsonStr, responseListClassType );
+                if ( errorResponseList != null && !errorResponseList.isEmpty( ) )
+                {
+                    // If it is an error responseList, we need to convert it to the desired responseList class
+                    for ( final ErrorResponse er : errorResponseList )
+                    {
+                        final T response = responseClass.newInstance( );
+                        response.setMessage( er.getMessage( ) );
+                        response.setResponseStatus( er.getResponseStatus( ) );
+                        response.setI18nMessageKey( er.getI18nMessageKey( ) );
+                        responseList.add( response );
+                    }
+                }
+            }
+            catch( final Exception e2 )
+            {
+                // If mapper didn't manage to map the json with a list of error response, we try to map it as single error response
+                final ErrorResponse er = mapper.readValue( jsonStr, ErrorResponse.class );
+                if ( er != null )
+                {
+                    // If it is an error responseList, we need to convert it to the desired responseList class
+                    final T response = responseClass.newInstance( );
+                    response.setMessage( er.getMessage( ) );
+                    response.setResponseStatus( er.getResponseStatus( ) );
+                    response.setI18nMessageKey( er.getI18nMessageKey( ) );
+                    responseList.add( response );
+                }
+            }
+        }
+        if ( !responseList.isEmpty( ) )
+        {
+            responseList = responseList.stream( ).map( r -> {
+                if ( StringUtils.isNotBlank( r.getI18nMessageKey( ) ) )
+                {
+                    r.setLocalizedMessage( I18nService.getLocalizedString( r.getI18nMessageKey( ), Locale.getDefault( ) ) );
+                }
+                return r;
+            } ).collect( Collectors.toList( ) );
+        }
+        return responseList;
+    }
+
 }
