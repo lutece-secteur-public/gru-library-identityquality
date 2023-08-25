@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
@@ -145,7 +146,7 @@ public class IdentityQualityService
      *            page to return
      * @param size
      *            number of results per page
-     * @return DuplicateSearchResponse containing a list of {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity}
+     * @return DuplicateSearchResponse containing a list of {@link IdentityDto}
      */
     public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max,
             final Integer page, final Integer size ) throws IdentityStoreException
