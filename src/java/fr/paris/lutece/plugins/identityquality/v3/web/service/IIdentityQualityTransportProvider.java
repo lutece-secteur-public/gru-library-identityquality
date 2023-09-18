@@ -77,16 +77,10 @@ public interface IIdentityQualityTransportProvider
      *            the SuspiciousIdentitySearchRequest
      * @param strClientCode
      *            the client app code
-     * @param max
-     *            maximum number of results
-     * @param page
-     *            page to return
-     * @param size
-     *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode, final int max,
-            final Integer page, final Integer size ) throws IdentityStoreException;
+    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode )
+            throws IdentityStoreException;
 
     /**
      * Get list of identities that are duplicates of the provided customerId's identity, according to the provided rule ID.

@@ -138,30 +138,19 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode, final int max,
-            final Integer page, final Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode )
+            throws IdentityStoreException
     {
         SuspiciousIdentityRequestValidator.instance( ).checkClientCode( strClientCode );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentitySearch( request );
 
-        _logger.debug( "Get all suspicious identities [ruleCode="
-                + request.getRuleCode( ) + "][attributes=[ " + request.getAttributes( ).stream( )
-                        .map( a -> "[key=" + a.getKey( ) + "][value=" + a.getValue( ) + "]" ).collect( Collectors.joining( " ],[ " ) )
-                + "]][max=" + max + "][page=" + page + "][size=" + size + "]" );
+        _logger.debug( "Get all suspicious identities [ruleCode=" + request.getRuleCode( ) + "][attributes=[ " + request.getAttributes( ).stream( )
+                .map( a -> "[key=" + a.getKey( ) + "][value=" + a.getValue( ) + "]" ).collect( Collectors.joining( " ],[ " ) ) + "]]" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         final Map<String, String> mapParams = new HashMap<>( );
-        mapParams.put( Constants.PARAM_MAX, String.valueOf( max ) );
-        if ( page != null )
-        {
-            mapParams.put( Constants.PARAM_PAGE, page.toString( ) );
-        }
-        if ( size != null )
-        {
-            mapParams.put( Constants.PARAM_SIZE, size.toString( ) );
-        }
 
         final SuspiciousIdentitySearchResponse response = _httpTransport.doPostJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3
                 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH + Constants.SEARCH_IDENTITIES_PATH, mapParams, mapHeadersRequest, request,

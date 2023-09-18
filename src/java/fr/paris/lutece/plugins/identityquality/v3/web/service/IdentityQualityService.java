@@ -125,10 +125,10 @@ public class IdentityQualityService
      *            number of results per page
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode, final int max,
-            final Integer page, final Integer size ) throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode )
+            throws IdentityStoreException
     {
-        return this._transportProvider.getSuspiciousIdentities( request, strClientCode, max, page, size );
+        return this._transportProvider.getSuspiciousIdentities( request, strClientCode );
     }
 
     /**
