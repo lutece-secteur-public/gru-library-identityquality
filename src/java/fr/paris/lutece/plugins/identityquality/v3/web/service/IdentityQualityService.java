@@ -34,7 +34,13 @@
 package fr.paris.lutece.plugins.identityquality.v3.web.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
@@ -86,28 +92,34 @@ public class IdentityQualityService
      * 
      * @param request
      * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return
      * @throws IdentityStoreException
      */
-    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientCode )
-            throws IdentityStoreException
+    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( final SuspiciousIdentityChangeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
-        return this._transportProvider.createSuspiciousIdentity( request, strClientCode );
+        return this._transportProvider.createSuspiciousIdentity( request, strClientCode, author );
     }
 
     /**
      * Get full list of duplicate rules.
      *
      * @param strClientCode
-     *            - the client code
+     *            the client code
+     * @param author
+     *            the author of the request
      * @param priority
      *            - the minimal priority of rules to return
      * @return DuplicateRuleSummarySearchResponse containing a list of <code>DuplicateRuleSummaryDto</code>.
      * @throws IdentityStoreException
      */
-    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final Integer priority ) throws IdentityStoreException
+    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final RequestAuthor author, final Integer priority )
+            throws IdentityStoreException
     {
-        return this._transportProvider.getAllDuplicateRules( strClientCode, priority );
+        return this._transportProvider.getAllDuplicateRules( strClientCode, author, priority );
     }
 
     /**
@@ -116,19 +128,15 @@ public class IdentityQualityService
      * @param request
      *            the SuspiciousIdentitySearchRequest
      * @param strClientCode
-     *            the client app code
-     * @param max
-     *            maximum number of results
-     * @param page
-     *            page to return
-     * @param size
-     *            number of results per page
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode )
-            throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
-        return this._transportProvider.getSuspiciousIdentities( request, strClientCode );
+        return this._transportProvider.getSuspiciousIdentities( request, strClientCode, author );
     }
 
     /**
@@ -138,20 +146,16 @@ public class IdentityQualityService
      *            the customer ID of the identity
      * @param ruleCode
      *            the rule code
-     * @param strApplicationCode
-     *            the application code
-     * @param max
-     *            maximum number of results
-     * @param page
-     *            page to return
-     * @param size
-     *            number of results per page
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return DuplicateSearchResponse containing a list of {@link IdentityDto}
      */
-    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max,
-            final Integer page, final Integer size ) throws IdentityStoreException
+    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return this._transportProvider.getDuplicates( customerId, ruleCode, strApplicationCode, max, page, size );
+        return this._transportProvider.getDuplicates( customerId, ruleCode, strClientCode, author );
     }
 
     /**
@@ -159,14 +163,16 @@ public class IdentityQualityService
      * 
      * @param request
      *            a valid SuspiciousIdentityExcludeRequest
-     * @param strApplicationCode
-     *            the application code
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
      */
-    public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
-            throws IdentityStoreException
+    public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
-        return this._transportProvider.excludeIdentities( request, strApplicationCode );
+        return this._transportProvider.excludeIdentities( request, strClientCode, author );
     }
 
     /**
@@ -174,14 +180,16 @@ public class IdentityQualityService
      *
      * @param request
      *            a valid SuspiciousIdentityExcludeRequest
-     * @param strApplicationCode
-     *            the application code
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
      */
-    public SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
-            throws IdentityStoreException
+    public SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
-        return this._transportProvider.cancelIdentitiesExclusion( request, strApplicationCode );
+        return this._transportProvider.cancelIdentitiesExclusion( request, strClientCode, author );
     }
 
     /**
@@ -191,10 +199,13 @@ public class IdentityQualityService
      *            a valid {@link SuspiciousIdentityLockRequest}
      * @param strClientCode
      *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentityLockResponse containing the status of the exclusion
      */
-    public SuspiciousIdentityLockResponse lockIdentity( final SuspiciousIdentityLockRequest request, final String strClientCode ) throws IdentityStoreException
+    public SuspiciousIdentityLockResponse lockIdentity( final SuspiciousIdentityLockRequest request, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return this._transportProvider.lock( request, strClientCode );
+        return this._transportProvider.lock( request, strClientCode, author );
     }
 }

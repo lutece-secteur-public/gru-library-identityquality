@@ -35,9 +35,14 @@ package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.SuspiciousIdentityRequestValidator;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
@@ -89,14 +94,16 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc }
      */
     @Override
-    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final Integer priority ) throws IdentityStoreException
+    public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final RequestAuthor author, final Integer priority )
+            throws IdentityStoreException
     {
         _logger.debug( "Get duplicate rules of " + strClientCode );
-
-        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+        this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
         final Map<String, String> mapParams = new HashMap<>( );
         if ( priority != null )
@@ -104,130 +111,130 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
             mapParams.put( Constants.PARAM_RULE_PRIORITY, priority.toString( ) );
         }
 
-        final DuplicateRuleSummarySearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.RULES_PATH, mapParams,
-                mapHeadersRequest, DuplicateRuleSummarySearchResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.RULES_PATH;
+        return _httpTransport.doGet( url, mapParams, mapHeadersRequest, DuplicateRuleSummarySearchResponse.class, _mapper );
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest request, String strClientCode )
-            throws IdentityStoreException
+    public SuspiciousIdentityChangeResponse createSuspiciousIdentity( final SuspiciousIdentityChangeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
         _logger.debug( "Create suspicious identity [cuid=" + request.getSuspiciousIdentity( ).getCustomerId( ) + "]" );
-        SuspiciousIdentityRequestValidator.instance( ).checkClientCode( strClientCode );
+        this.checkCommonHeaders( strClientCode, author );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
         SuspiciousIdentityRequestValidator.instance( ).checkCustomerId( request.getSuspiciousIdentity( ).getCustomerId( ) );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
         final Map<String, String> mapParams = new HashMap<>( );
 
-        final SuspiciousIdentityChangeResponse response = _httpTransport.doPostJSON(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH, mapParams,
-                mapHeadersRequest, request, SuspiciousIdentityChangeResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH;
+        return _httpTransport.doPostJSON( url, mapParams, mapHeadersRequest, request, SuspiciousIdentityChangeResponse.class, _mapper );
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode )
-            throws IdentityStoreException
+    public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
-        SuspiciousIdentityRequestValidator.instance( ).checkClientCode( strClientCode );
-        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentitySearch( request );
-
         _logger.debug( "Get all suspicious identities [ruleCode=" + request.getRuleCode( ) + "][attributes=[ " + request.getAttributes( ).stream( )
                 .map( a -> "[key=" + a.getKey( ) + "][value=" + a.getValue( ) + "]" ).collect( Collectors.joining( " ],[ " ) ) + "]]" );
+        this.checkCommonHeaders( strClientCode, author );
+        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentitySearch( request );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
         final Map<String, String> mapParams = new HashMap<>( );
 
-        final SuspiciousIdentitySearchResponse response = _httpTransport.doPostJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3
-                + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH + Constants.SEARCH_IDENTITIES_PATH, mapParams, mapHeadersRequest, request,
-                SuspiciousIdentitySearchResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH
+                + Constants.SEARCH_IDENTITIES_PATH;
+        return _httpTransport.doPostJSON( url, mapParams, mapHeadersRequest, request, SuspiciousIdentitySearchResponse.class, _mapper );
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max,
-            final Integer page, final Integer size ) throws IdentityStoreException
-    {
-        _logger.debug( "Get all duplicates for identity [customerId=" + customerId + "[ruleCode=" + ruleCode + "][max=" + max + "][page=" + page + "][size="
-                + size + "]" );
-
-        final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
-        final Map<String, String> mapParams = new HashMap<>( );
-        mapParams.put( Constants.PARAM_MAX, String.valueOf( max ) );
-        if ( page != null )
-        {
-            mapParams.put( Constants.PARAM_PAGE, page.toString( ) );
-        }
-        if ( size != null )
-        {
-            mapParams.put( Constants.PARAM_SIZE, size.toString( ) );
-        }
-
-        return _httpTransport.doGet( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH
-                + "/" + customerId + "?" + Constants.PARAM_RULE_CODE + "=" + ruleCode, mapParams, mapHeadersRequest, DuplicateSearchResponse.class, _mapper );
-    }
-
-    @Override
-    public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
+    public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        SuspiciousIdentityRequestValidator.instance( ).checkOrigin( request.getOrigin( ) );
-        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
-
-        final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
-        final Map<String, String> mapParams = new HashMap<>( );
-
-        return _httpTransport.doPutJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.EXCLUSION_PATH,
-                mapParams, mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
-    }
-
-    @Override
-    public SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
-            throws IdentityStoreException
-    {
-        SuspiciousIdentityRequestValidator.instance( ).checkOrigin( request.getOrigin( ) );
-        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
-
-        final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
-        final Map<String, String> mapParams = new HashMap<>( );
-
-        return _httpTransport.doPostJSON(
-                _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.CANCEL_IDENTITIES_EXCLUSION_PATH, mapParams,
-                mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
-    }
-
-    @Override
-    public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode ) throws IdentityStoreException
-    {
-        SuspiciousIdentityRequestValidator.instance( ).checkClientCode( strClientCode );
-        _logger.debug( "Manage lock identity [cuid=" + request.getCustomerId( ) + "] with [locked=" + request.isLocked( ) + "]" );
+        _logger.debug( "Get all duplicates for identity [customerId=" + customerId + "[ruleCode=" + ruleCode + "]" );
+        this.checkCommonHeaders( strClientCode, author );
+        SuspiciousIdentityRequestValidator.instance( ).checkCustomerId( customerId );
+        SuspiciousIdentityRequestValidator.instance( ).checkRuleCode( ruleCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
-        final Map<String, String> mapParams = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        return _httpTransport.doPostJSON( _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH,
-                mapParams, mapHeadersRequest, request, SuspiciousIdentityLockResponse.class, _mapper );
+        final HashMap<String, String> mapParams = new HashMap<>( );
+        mapParams.put( Constants.PARAM_RULE_CODE, ruleCode );
+
+        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH + "/"
+                + customerId;
+        return _httpTransport.doGet( url, mapParams, mapHeadersRequest, DuplicateSearchResponse.class, _mapper );
+    }
+
+    @Override
+    public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
+    {
+        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
+        this.checkCommonHeaders( strClientCode, author );
+        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.EXCLUSION_PATH;
+        return _httpTransport.doPutJSON( url, null, mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
+    }
+
+    @Override
+    public SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
+    {
+        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
+        this.checkCommonHeaders( strClientCode, author );
+        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.CANCEL_IDENTITIES_EXCLUSION_PATH;
+        return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
+    }
+
+    @Override
+    public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
+    {
+        _logger.debug( "Manage lock identity [cuid=" + request.getCustomerId( ) + "] with [locked=" + request.isLocked( ) + "]" );
+        this.checkCommonHeaders( strClientCode, author );
+        SuspiciousIdentityRequestValidator.instance( ).checkLockRequest( request );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH;
+        return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, SuspiciousIdentityLockResponse.class, _mapper );
     }
 }

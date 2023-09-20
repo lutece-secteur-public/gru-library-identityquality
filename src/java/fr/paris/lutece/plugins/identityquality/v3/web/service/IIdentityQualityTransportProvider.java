@@ -33,8 +33,15 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.*;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentityExcludeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
@@ -50,25 +57,32 @@ public interface IIdentityQualityTransportProvider
     /**
      * Get full list of duplicate rules.
      *
-     * @param strApplicationCode
-     *            - the application code
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @param priority
-     *            - the minimal priority of rules to return
+     *            the minimal priority of rules to return
      * @return DuplicateRuleSummarySearchResponse containing a list of <code>DuplicateRuleSummaryDto</code>.
      * @throws IdentityStoreException
      */
-    DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strApplicationCode, final Integer priority ) throws IdentityStoreException;
+    DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final RequestAuthor author, final Integer priority )
+            throws IdentityStoreException;
 
     /**
      * Report a suspicious identity
      * 
      * @param suspiciousIdentityChangeRequest
+     *            the identity change request
      * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return
      * @throws IdentityStoreException
      */
-    SuspiciousIdentityChangeResponse createSuspiciousIdentity( SuspiciousIdentityChangeRequest suspiciousIdentityChangeRequest, String strClientCode )
-            throws IdentityStoreException;
+    SuspiciousIdentityChangeResponse createSuspiciousIdentity( final SuspiciousIdentityChangeRequest suspiciousIdentityChangeRequest,
+            final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Get list of suspicious identities for a given rule ID
@@ -76,11 +90,13 @@ public interface IIdentityQualityTransportProvider
      * @param request
      *            the SuspiciousIdentitySearchRequest
      * @param strClientCode
-     *            the client app code
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentitySearchResponse containing a list of SuspiciousIdentityDto
      */
-    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode )
-            throws IdentityStoreException;
+    SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Get list of identities that are duplicates of the provided customerId's identity, according to the provided rule ID.
@@ -89,51 +105,60 @@ public interface IIdentityQualityTransportProvider
      *            the customer ID of the identity
      * @param ruleCode
      *            the rule code
-     * @param strApplicationCode
-     *            the application code
-     * @param max
-     *            maximum number of results
-     * @param page
-     *            page to return
-     * @param size
-     *            number of results per page
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return DuplicateSearchResponse containing a list of {@link IdentityDto}
      */
-    DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strApplicationCode, final int max, final Integer page,
-            final Integer size ) throws IdentityStoreException;
+    DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Exclude identities from duplicate suspicions.
      * 
      * @param request
      *            a valid SuspiciousIdentityExcludeRequest
-     * @param strApplicationCode
-     *            the application code
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
      */
-    SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strApplicationCode )
-            throws IdentityStoreException;
+    SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Cancel identities exclusion from duplicate suspicions.
      *
      * @param request
      *            a valid SuspiciousIdentityExcludeRequest
-     * @param strApplicationCode
-     *            the application code
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
      */
-    SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( SuspiciousIdentityExcludeRequest request, String strApplicationCode )
-            throws IdentityStoreException;
+    SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Lock duplicate suspicions.
      *
      * @param request
-     *            a valid {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest}
-     * @param strApplicationCode
-     *            the application code
+     *            a valid {@link SuspiciousIdentityLockRequest}
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
      * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
      */
-    SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strApplicationCode ) throws IdentityStoreException;
+    SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
+
+    default void checkCommonHeaders( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
+    {
+        IdentityRequestValidator.instance( ).checkAuthor( author );
+        IdentityRequestValidator.instance( ).checkClientCode( clientCode );
+    }
 }
