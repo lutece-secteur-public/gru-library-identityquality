@@ -98,7 +98,6 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
     {
         String strToken = StringUtils.EMPTY;
 
-
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
         Map<String, String> mapParams = new HashMap<String, String>( );
 
