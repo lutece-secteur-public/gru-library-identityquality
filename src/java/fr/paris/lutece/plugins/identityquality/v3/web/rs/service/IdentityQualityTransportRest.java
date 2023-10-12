@@ -49,23 +49,15 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * IdentityQualityRestClientService
  */
 public class IdentityQualityTransportRest extends AbstractTransportRest implements IIdentityQualityTransportProvider
 {
-
-    /**
-     * Logger
-     */
-    private static Logger _logger = Logger.getLogger( IdentityQualityTransportRest.class );
-
     /** URL for identityStore Quality REST service */
     private String _strIdentityStoreQualityEndPoint;
 
@@ -97,7 +89,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public DuplicateRuleSummarySearchResponse getAllDuplicateRules( final String strClientCode, final RequestAuthor author, final Integer priority )
             throws IdentityStoreException
     {
-        _logger.debug( "Get duplicate rules of " + strClientCode );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -122,7 +113,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public SuspiciousIdentityChangeResponse createSuspiciousIdentity( final SuspiciousIdentityChangeRequest request, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Create suspicious identity [cuid=" + request.getSuspiciousIdentity( ).getCustomerId( ) + "]" );
         this.checkCommonHeaders( strClientCode, author );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
         SuspiciousIdentityRequestValidator.instance( ).checkCustomerId( request.getSuspiciousIdentity( ).getCustomerId( ) );
@@ -145,8 +135,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public SuspiciousIdentitySearchResponse getSuspiciousIdentities( final SuspiciousIdentitySearchRequest request, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Get all suspicious identities [ruleCode=" + request.getRuleCode( ) + "][attributes=[ " + request.getAttributes( ).stream( )
-                .map( a -> "[key=" + a.getKey( ) + "][value=" + a.getValue( ) + "]" ).collect( Collectors.joining( " ],[ " ) ) + "]]" );
         this.checkCommonHeaders( strClientCode, author );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentitySearch( request );
 
@@ -169,7 +157,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public DuplicateSearchResponse getDuplicates( final String customerId, final String ruleCode, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Get all duplicates for identity [customerId=" + customerId + "[ruleCode=" + ruleCode + "]" );
         this.checkCommonHeaders( strClientCode, author );
         SuspiciousIdentityRequestValidator.instance( ).checkCustomerId( customerId );
         SuspiciousIdentityRequestValidator.instance( ).checkRuleCode( ruleCode );
@@ -191,7 +178,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public SuspiciousIdentityExcludeResponse excludeIdentities( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
         this.checkCommonHeaders( strClientCode, author );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
 
@@ -208,7 +194,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public SuspiciousIdentityExcludeResponse cancelIdentitiesExclusion( final SuspiciousIdentityExcludeRequest request, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Exclude identities [cuid1=" + request.getIdentityCuid1( ) + "] and [cuid2=" + request.getIdentityCuid2( ) );
         this.checkCommonHeaders( strClientCode, author );
         SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
 
@@ -225,7 +210,6 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Manage lock identity [cuid=" + request.getCustomerId( ) + "] with [locked=" + request.isLocked( ) + "]" );
         this.checkCommonHeaders( strClientCode, author );
         SuspiciousIdentityRequestValidator.instance( ).checkLockRequest( request );
 
