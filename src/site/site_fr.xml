@@ -10,8 +10,8 @@
         </menu>
         
         <menu name="Téléchargements" inherit="bottom" >
-            <item name="Versions stables" href="../../../stable_builds/plugins/plugin-librairy-identityquality/"/>
-            <item name="Nightly builds" href="../../../nightly_builds/plugins/plugin-librairy-identityquality/" />
+            <item name="Versions stables" href="../../../stable_builds/plugins/gru-librairy-identityquality/"/>
+            <item name="Nightly builds" href="../../../nightly_builds/plugins/gru-librairy-identityquality/" />
         </menu>
 
     <!--
