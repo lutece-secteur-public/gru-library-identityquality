@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
@@ -156,6 +157,23 @@ public class IdentityQualityService
             throws IdentityStoreException
     {
         return this._transportProvider.getDuplicates( customerId, ruleCode, strClientCode, author );
+    }
+
+    /**
+     * Get list of identities that are potential duplicates of the provided virtual identity (list of attributes), according to the provided rule codes.
+     *
+     * @param request
+     *            the duplicate search request
+     * @param strClientCode
+     *            the client code
+     * @param author
+     *            the author of the request
+     * @return DuplicateSearchResponse containing a list of {@link IdentityDto}
+     */
+    public DuplicateSearchResponse searchDuplicates( final DuplicateSearchRequest request, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
+    {
+        return this._transportProvider.searchDuplicates( request, strClientCode, author );
     }
 
     /**

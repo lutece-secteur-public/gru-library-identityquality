@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
@@ -161,4 +162,7 @@ public interface IIdentityQualityTransportProvider
         IdentityRequestValidator.instance( ).checkAuthor( author );
         IdentityRequestValidator.instance( ).checkClientCode( clientCode );
     }
+
+    DuplicateSearchResponse searchDuplicates( final DuplicateSearchRequest request, final String ruleCode, final RequestAuthor author )
+            throws IdentityStoreException;
 }
