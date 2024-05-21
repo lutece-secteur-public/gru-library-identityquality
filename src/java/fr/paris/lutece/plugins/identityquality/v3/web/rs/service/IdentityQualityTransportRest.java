@@ -200,7 +200,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
             final RequestAuthor author ) throws IdentityStoreException
     {
         this.checkCommonHeaders( strClientCode, author );
-        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
+        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityExclude( request );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -216,7 +216,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
             final RequestAuthor author ) throws IdentityStoreException
     {
         this.checkCommonHeaders( strClientCode, author );
-        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityChange( request );
+        SuspiciousIdentityRequestValidator.instance( ).checkSuspiciousIdentityExclude( request );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
