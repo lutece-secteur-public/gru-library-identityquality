@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
 /**
@@ -57,6 +58,8 @@ public class IdentityQualityService
     /** transport provider */
     private IIdentityQualityTransportProvider _transportProvider;
 
+
+    		
     /**
      * Simple Constructor
      */
@@ -76,7 +79,8 @@ public class IdentityQualityService
         super( );
         this._transportProvider = transportProvider;
     }
-
+  
+    
     /**
      * setter of transportProvider parameter
      *
