@@ -11,7 +11,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>library-identityquality</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <name>Lutece identityquality library</name>
 
     <scm>
@@ -26,7 +26,7 @@
         <springVersion>5.3.18</springVersion> <!-- for tests -->
         <componentName>GRU Library Identity Quality</componentName>
         <jiraProjectName>LIBIDQUALITY</jiraProjectName>
-        <jiraComponentId></jiraComponentId>
+        <jiraComponentId />
     </properties>
 
     <repositories>

@@ -61,6 +61,8 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 {
     /** URL for identityStore Quality REST service */
     private String _strIdentityStoreQualityEndPoint;
+    
+    private String _strIdentityPath;
 
     /**
      * Simple Constructor
@@ -81,8 +83,23 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         super( httpTransport );
 
         _strIdentityStoreQualityEndPoint = httpTransport.getApiEndPointUrl( );
+        _strIdentityPath = Constants.CONSTANT_DEFAULT_IDENTITY_PATH;
     }
 
+    /**
+     * Constructor with IHttpTransportProvider parameter
+     *
+     * @param httpTransport
+     *            the provider to use
+     */
+    public IdentityQualityTransportRest( final IHttpTransportProvider httpTransport, String strIdentityPath )
+    {
+        super( httpTransport );
+
+        _strIdentityStoreQualityEndPoint = httpTransport.getApiEndPointUrl( );
+        _strIdentityPath = strIdentityPath;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -103,7 +120,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
             mapParams.put( Constants.PARAM_RULE_PRIORITY, priority.toString( ) );
         }
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.RULES_PATH;
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.RULES_PATH;
         return _httpTransport.doGet( url, mapParams, mapHeadersRequest, DuplicateRuleSummarySearchResponse.class, _mapper );
     }
 
@@ -125,7 +142,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 
         final Map<String, String> mapParams = new HashMap<>( );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH;
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH;
         return _httpTransport.doPostJSON( url, mapParams, mapHeadersRequest, request, SuspiciousIdentityChangeResponse.class, _mapper );
     }
 
@@ -146,7 +163,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 
         final Map<String, String> mapParams = new HashMap<>( );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.SUSPICIONS_PATH
                 + Constants.SEARCH_IDENTITIES_PATH;
         return _httpTransport.doPostJSON( url, mapParams, mapHeadersRequest, request, SuspiciousIdentitySearchResponse.class, _mapper );
     }
@@ -170,7 +187,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         final HashMap<String, String> mapParams = new HashMap<>( );
         mapParams.put( Constants.PARAM_RULE_CODE, ruleCode );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH + "/"
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH + "/"
                 + customerId;
         return _httpTransport.doGet( url, mapParams, mapHeadersRequest, DuplicateSearchResponse.class, _mapper );
     }
@@ -190,7 +207,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH
                 + Constants.SEARCH_IDENTITIES_PATH;
         return _httpTransport.doPostJSON( url, new HashMap<>( ), mapHeadersRequest, request, DuplicateSearchResponse.class, _mapper );
     }
@@ -207,7 +224,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.EXCLUSION_PATH;
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.EXCLUSION_PATH;
         return _httpTransport.doPutJSON( url, null, mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
     }
 
@@ -223,7 +240,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.CANCEL_IDENTITIES_EXCLUSION_PATH;
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + Constants.CANCEL_IDENTITIES_EXCLUSION_PATH;
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, SuspiciousIdentityExcludeResponse.class, _mapper );
     }
 
@@ -239,7 +256,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH;
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH;
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, SuspiciousIdentityLockResponse.class, _mapper );
     }
 }
