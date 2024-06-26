@@ -207,7 +207,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreQualityEndPoint + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.DUPLICATE_PATH
                 + Constants.SEARCH_IDENTITIES_PATH;
         return _httpTransport.doPostJSON( url, new HashMap<>( ), mapHeadersRequest, request, DuplicateSearchResponse.class, _mapper );
     }
