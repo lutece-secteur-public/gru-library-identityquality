@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityAllLocksResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchRequest;
@@ -258,5 +259,36 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 
         final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.LOCK_PATH;
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, SuspiciousIdentityLockResponse.class, _mapper );
+    }
+
+    @Override
+    public SuspiciousIdentityLockResponse checkLock(String customerId, String strClientCode, RequestAuthor author)
+            throws IdentityStoreException
+    {
+        this.checkCommonHeaders( strClientCode, author );
+        SuspiciousIdentityRequestValidator.instance( ).checkCustomerId( customerId );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.CHECK_LOCK_PATH + "/"
+                + customerId;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, SuspiciousIdentityLockResponse.class, _mapper );
+    }
+
+    @Override
+    public SuspiciousIdentityAllLocksResponse getAllLocks( String strClientCode, RequestAuthor author) throws IdentityStoreException
+    {
+        this.checkCommonHeaders( strClientCode, author );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreQualityEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.QUALITY_PATH + "/" + Constants.ALL_LOCKS_PATH;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, SuspiciousIdentityAllLocksResponse.class, _mapper );
     }
 }
