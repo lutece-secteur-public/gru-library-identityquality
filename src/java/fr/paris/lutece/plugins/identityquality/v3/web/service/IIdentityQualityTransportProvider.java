@@ -43,7 +43,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityAllLocksResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchRequest;
@@ -156,36 +155,6 @@ public interface IIdentityQualityTransportProvider
      * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
      */
     SuspiciousIdentityLockResponse lock( final SuspiciousIdentityLockRequest request, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException;
-
-    /**
-     * Check duplicate suspicions lock status.
-     *
-     * @param request
-     *            a valid {@link SuspiciousIdentityLockRequest}
-     * @param strClientCode
-     *            the client code
-     * @param author
-     *            the author of the request
-     * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
-     */
-    SuspiciousIdentityLockResponse checkLock( final String customerId, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException;
-
-
-
-    /**
-     * Check duplicate suspicions lock status.
-     *
-     * @param request
-     *            a valid {@link SuspiciousIdentityLockRequest}
-     * @param strClientCode
-     *            the client code
-     * @param author
-     *            the author of the request
-     * @return SuspiciousIdentityExcludeResponse containing the status of the exclusion
-     */
-    SuspiciousIdentityAllLocksResponse getAllLocks( final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException;
 
     default void checkCommonHeaders( final String clientCode, final RequestAuthor author ) throws IdentityStoreException

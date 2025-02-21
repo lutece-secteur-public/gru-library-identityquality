@@ -42,12 +42,10 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdenti
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.SuspiciousIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityAllLocksResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.lock.SuspiciousIdentityLockResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.DuplicateSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
 /**
@@ -230,17 +228,5 @@ public class IdentityQualityService
             throws IdentityStoreException
     {
         return this._transportProvider.lock( request, strClientCode, author );
-    }
-
-    public SuspiciousIdentityLockResponse checkLock(final String cuid, final String strClientCode, final RequestAuthor author)
-            throws IdentityStoreException
-    {
-        return this._transportProvider.checkLock(cuid, strClientCode, author);
-    }
-
-    public SuspiciousIdentityAllLocksResponse getAllLocks( final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
-    {
-        return this._transportProvider.getAllLocks( strClientCode, author);
     }
 }
