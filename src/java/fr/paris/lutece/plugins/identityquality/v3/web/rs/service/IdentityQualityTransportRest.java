@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.identityquality.v3.web.rs.service;
 
-import fr.paris.lutece.plugins.identityquality.v3.web.service.IHttpTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.business.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identityquality.v3.web.service.IIdentityQualityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.SuspiciousIdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
